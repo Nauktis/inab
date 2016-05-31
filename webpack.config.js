@@ -1,6 +1,7 @@
 var debug = process.env.NODE_ENV !== "production";
 var webpack = require("webpack");
 var path = require("path");
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   devtool: debug ? "inline-sourcemap" : null,
@@ -17,6 +18,10 @@ module.exports = {
         query: {
           presets: ['react', 'es2015']
         }
+      },
+      {
+        test: /\.scss$/,
+        loader: ExtractTextPlugin.extract('css!sass')
       }
     ]
   },
@@ -26,7 +31,8 @@ module.exports = {
     filename: "app.min.js"
   },
 
-  plugins: debug ? [] : [
+  plugins: debug ? [new ExtractTextPlugin('style.css', {allChunks: true})] : [
+    new ExtractTextPlugin('style.css', {allChunks: true}),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false })
